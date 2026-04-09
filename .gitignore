@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv/
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docs (generated)
+docs/
+
+# Environment
+.env
+.env.local
+
+# Uploads / data
+data/articles/*.md
+blog.db
+
+# SSL certificates (never commit real certificates)
+ssl/
+
+# Claude Code workflow
+.spec-workflow/

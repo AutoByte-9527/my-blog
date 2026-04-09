@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F5F5F0;
+  --foreground: #2D2D2D;
+  --primary: #2D2D2D;
+  --accent: #8B4513;
+  --muted: #6B6B6B;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, sans-serif;
+  line-height: 1.8;
+}
+
+/* Page fade transition */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-animate {
+  animation: pageFadeIn 250ms ease-out forwards;
+}
