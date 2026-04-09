@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, Get } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { VisitService } from './visit.service';
 import { CreateVisitDto } from './dto/create-visit.dto';
@@ -14,5 +14,10 @@ export class VisitController {
     @Req() request: any,
   ): Promise<{ message: string }> {
     return this.visitService.create(dto, request);
+  }
+
+  @Get('stats')
+  async getStats(): Promise<{ total: number }> {
+    return this.visitService.getTotalStats();
   }
 }

@@ -52,4 +52,7 @@ export class Article {
 
   @OneToMany(() => VisitLog, (visitLog) => visitLog.article)
   visitLogs: VisitLog[];
+
+  @Column({ default: 0, name: 'view_count' })
+  viewCount: number;
 }

@@ -67,6 +67,21 @@ export class VisitService {
 
     await this.visitLogRepository.save(visitLog);
 
+    // Increment article view count
+    await this.articleRepository.increment(
+      { id: dto.article_id },
+      'viewCount',
+      1,
+    );
+
     return { message: '访问记录成功' };
+  }
+
+  async getTotalStats(): Promise<{ total: number }> {
+    const result = await this.articleRepository
+      .createQueryBuilder('article')
+      .select('SUM(article.viewCount)', 'total')
+      .getRawOne();
+    return { total: parseInt(result?.total || '0', 10) };
   }
 }

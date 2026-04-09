@@ -32,6 +32,11 @@ export class ArticleService implements OnModuleInit {
     private markdownService: MarkdownService,
   ) {}
 
+  private formatDateTime(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  }
+
   private toResponseDto(article: Article): ArticleResponseDto {
     const tags =
       article.tags?.map((t) => ({
@@ -57,7 +62,8 @@ export class ArticleService implements OnModuleInit {
       summary: article.summary,
       category,
       tags,
-      created_at: article.createdAt.toISOString(),
+      created_at: this.formatDateTime(article.createdAt),
+      viewCount: article.viewCount || 0,
     };
   }
 
@@ -65,7 +71,7 @@ export class ArticleService implements OnModuleInit {
     return {
       ...this.toResponseDto(article),
       content: article.content,
-      updated_at: article.updatedAt.toISOString(),
+      updated_at: this.formatDateTime(article.updatedAt),
     };
   }
 

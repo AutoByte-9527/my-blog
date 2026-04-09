@@ -8,6 +8,7 @@ export class ArticleResponseDto implements ArticleListItem {
   category: Category | null;
   tags: Tag[];
   created_at: string;
+  viewCount: number;
 }
 
 export class ArticleDetailResponseDto

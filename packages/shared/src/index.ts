@@ -26,11 +26,18 @@ export interface ArticleListItem {
   category: Category | null;
   tags: Tag[];
   created_at: string;
+  viewCount?: number;
 }
 
 export interface ArticleDetail extends ArticleListItem {
   content: string;
   updated_at: string;
+}
+
+// ============ Visit Stats ============
+
+export interface VisitStats {
+  total: number;
 }
 
 // ============ Visit ============
