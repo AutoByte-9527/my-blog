@@ -57,6 +57,7 @@ export default function ArticleDetailPage() {
       <div className="flex items-center gap-4 text-sm text-[var(--muted)] mb-8 pb-8 border-b border-[var(--foreground)]/10">
         <time>{formatDate(article.created_at)}</time>
         {article.category && <CategoryBadge category={article.category} />}
+        <span>{article.viewCount?.toLocaleString() || 0} 阅读</span>
       </div>
       {article.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-8">

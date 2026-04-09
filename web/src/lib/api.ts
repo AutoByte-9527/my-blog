@@ -1,4 +1,4 @@
-import { ArticleListItem, ArticleDetail, Tag, Category, VisitData } from "@my-blog/shared";
+import { ArticleListItem, ArticleDetail, Tag, Category, VisitData, VisitStats } from "@my-blog/shared";
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -88,4 +88,8 @@ export async function recordVisit(data: VisitData): Promise<void> {
     // 静默失败，不影响用户
     console.warn("访问记录失败:", e);
   }
+}
+
+export async function getVisitStats(): Promise<VisitStats> {
+  return fetchApi<VisitStats>(`${API_BASE}/api/visits/stats`);
 }

@@ -1,20 +1,33 @@
 "use client";
 
 import { Link } from "react-router";
+import { useEffect } from "react";
 import { useAppStore } from "@/stores/appStore";
+import { getVisitStats } from "@/lib/api";
 import SearchBar from "./SearchBar";
 
 export default function Header() {
   const categories = useAppStore((state) => state.categories);
+  const totalVisits = useAppStore((state) => state.totalVisits);
+  const setTotalVisits = useAppStore((state) => state.setTotalVisits);
+
+  useEffect(() => {
+    getVisitStats()
+      .then((stats) => setTotalVisits(stats.total))
+      .catch(console.error);
+  }, [setTotalVisits]);
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--background)]/95 backdrop-blur-sm border-b border-[var(--foreground)]/10">
       <nav className="max-w-4xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="text-2xl text-[var(--primary)] hover:text-[var(--accent)] transition-colors cursor-pointer">
-            墨韵
-          </Link>
+          {/* Logo & Stats */}
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-2xl text-[var(--primary)] hover:text-[var(--accent)] transition-colors cursor-pointer">
+              墨韵
+            </Link>
+            <span className="text-sm text-[var(--muted)] hidden sm:inline">浏览 {totalVisits.toLocaleString()}</span>
+          </div>
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-6">

@@ -25,7 +25,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 10,
+        limit: 100,
       },
     ]),
     MarkdownModule,

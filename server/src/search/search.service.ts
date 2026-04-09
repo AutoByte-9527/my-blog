@@ -13,6 +13,11 @@ export class SearchService {
     private articleService: ArticleService,
   ) {}
 
+  private formatDateTime(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  }
+
   async search(q: string): Promise<ArticleListItem[]> {
     await this.articleService.syncArticlesToDb();
 
@@ -47,7 +52,7 @@ export class SearchService {
           slug: t.slug,
           article_count: t.articles?.length || 0,
         })) || [],
-      created_at: article.createdAt.toISOString(),
+      created_at: this.formatDateTime(article.createdAt),
     }));
   }
 }
