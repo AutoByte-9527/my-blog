@@ -15,6 +15,12 @@ export default function Footer() {
               归档
             </Link>
           </p>
+          {/* 备案信息 - 备案后取消注释并填写 */}
+          {/* <p className="mt-2">
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">
+              京ICP备XXXXXXXX号
+            </a>
+          </p> */}
         </div>
       </div>
     </footer>
