@@ -41,3 +41,6 @@ ssl/
 
 # Claude Code workflow
 .spec-workflow/
+
+# Serena
+.serena/
