@@ -16,8 +16,11 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
     volumes:
       - ./data:/app/data
+      - ./server/blog.db:/app/blog.db
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/api/articles"]
       interval: 30s

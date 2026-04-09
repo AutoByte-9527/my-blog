@@ -19,7 +19,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       type: 'better-sqlite3',
       database: 'blog.db',
       entities: [Article, Category, Tag, VisitLog],
-      synchronize: false,
+      synchronize: process.env.NODE_ENV !== 'production',
       namingStrategy: new SnakeNamingStrategy(),
     }),
     ThrottlerModule.forRoot([
