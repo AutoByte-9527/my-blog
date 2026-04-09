@@ -21,14 +21,17 @@ my-blog/
 │   └── dist/            # 构建产物
 ├── server/              # 后端 (NestJS)
 │   └── src/
-│       ├── article/     # 文章模块
+│       ├── article/      # 文章模块
 │       ├── category/    # 分类模块
 │       ├── tag/         # 标签模块
+│       ├── search/       # 搜索模块
 │       └── visit/       # 访问记录模块
 ├── data/
 │   └── articles/        # Markdown 文章
-├── nginx.conf           # Nginx 配置
-└── docker-compose.yml   # Docker 编排
+├── nginx.conf           # Nginx 配置 (反向代理 + HTTPS)
+├── ssl/                  # SSL 证书目录 (不上传)
+├── docker-compose.yml    # Docker 编排
+└── deploy.sh            # 一键部署脚本
 ```
 
 ## 开发
@@ -76,13 +79,27 @@ Slug 用于 URL：`/articles/{slug}`
 
 ## 生产部署
 
-### Docker 部署
+### 一键部署
 
 ```bash
-# 1. 构建前端
-cd web && pnpm build && cd ..
+./deploy.sh
+```
 
-# 2. 启动服务
+脚本会自动：1. 拉取最新代码
+2. 构建前端
+3. 启动 Docker 容器
+
+### 手动部署
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/AutoByte-9527/my-blog.git
+cd my-blog
+
+# 2. 构建前端
+cd web && pnpm install && pnpm build && cd ..
+
+# 3. 启动服务
 docker-compose up -d
 ```
 
@@ -90,20 +107,66 @@ docker-compose up -d
 
 ### HTTPS 配置
 
-1. 申请 SSL 证书，放入 `ssl/` 目录
-2. 取消 `nginx.conf` 中 HTTPS server 块的注释
-3. 修改 `server_name` 为你的域名
-4. 重启：`docker-compose restart nginx`
+1. 申请 SSL 证书，放入 `ssl/` 目录：
+   ```
+   ssl/
+   ├── fullchain.pem
+   └── privkey.pem
+   ```
 
-### 仅开放 80/443 端口
+2. 修改 `nginx.conf`，取消 HTTPS server 块的注释：
+   ```nginx
+   server {
+       listen 443 ssl;
+       server_name your-domain.com;  # 改成你的域名
+       ...
+   }
+   ```
 
-后端 8000 端口通过 Nginx 内部代理，对外不可见。
+3. 修改 `docker-compose.yml`，取消 443 端口注释：
+   ```yaml
+   ports:
+     - "80:80"
+     - "443:443"
+   ```
+
+4. 重启：
+   ```bash
+   docker-compose restart nginx
+   ```
+
+### HTTP 自动跳转 HTTPS
+
+启用 HTTPS 后，80 端口的 HTTP 请求会自动跳转到 443。
+
+### 架构
+
+```
+                    ┌─────────────┐
+                    │   Nginx     │
+浏览器 ─────────────┤  (反向代理)  │
+                    │  80 / 443   │
+                    └──────┬──────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+              ▼            ▼            ▼
+        ┌─────────┐  ┌───────────┐  ┌─────────┐
+        │  静态文件 │  │   API     │  │         │
+        │  (SPA)  │  │ :8000     │  │         │
+        └─────────┘  └───────────┘  └─────────┘
+```
+
+- **80**: HTTP，跳转 HTTPS
+- **443**: HTTPS，处理所有请求
+- **8000**: 仅内部访问，对外隐藏
 
 ## 设计
 
 - **风格**：水墨风格 (Ink Wash)
 - **配色**：背景 #F5F5F0，文字 #2D2D2D，强调色 #8B4513
 - **字体**：系统字体
+- **页面过渡**：淡入动画 (250ms)
 
 ## License
 
