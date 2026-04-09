@@ -21,17 +21,18 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install production dependencies only
+# Install build dependencies for native modules
+RUN apk add --no-cache python3 make g++
+
+# Copy package files
 COPY package.json pnpm-lock.yaml ./
+
+# Install production dependencies (rebuilds native modules)
 RUN npm install -g pnpm && \
     pnpm install --frozen-lockfile --prod
 
 # Copy built application
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.pnpm/*/node_modules/better-sqlite3 ./node_modules/better-sqlite3
-
-# Copy data directory for articles
-COPY data ./data
 
 EXPOSE 8000
 
