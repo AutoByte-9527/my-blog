@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -19,9 +18,6 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-
-  // Enable global throttling guard
-  app.useGlobalGuards(new ThrottlerGuard());
 
   const port = process.env.PORT || 8000;
   await app.listen(port);

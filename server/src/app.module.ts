@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { TagModule } from './tag/tag.module';
@@ -34,6 +35,12 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
     TagModule,
     VisitModule,
     SearchModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}
