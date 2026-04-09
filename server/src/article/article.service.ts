@@ -1,11 +1,14 @@
-import { Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Article } from "./entities/article.entity";
-import { Category } from "../category/entities/category.entity";
-import { Tag } from "../tag/entities/tag.entity";
-import { MarkdownService } from "../markdown/markdown.service";
-import { ArticleResponseDto, ArticleDetailResponseDto } from "./dto/article-response.dto";
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Article } from './entities/article.entity';
+import { Category } from '../category/entities/category.entity';
+import { Tag } from '../tag/entities/tag.entity';
+import { MarkdownService } from '../markdown/markdown.service';
+import {
+  ArticleResponseDto,
+  ArticleDetailResponseDto,
+} from './dto/article-response.dto';
 
 @Injectable()
 export class ArticleService implements OnModuleInit {
@@ -13,10 +16,10 @@ export class ArticleService implements OnModuleInit {
 
   async onModuleInit() {
     if (!this.initialized) {
-      console.log("Syncing articles to database on startup...");
+      console.log('Syncing articles to database on startup...');
       await this.syncArticlesToDb();
       this.initialized = true;
-      console.log("Article sync completed.");
+      console.log('Article sync completed.');
     }
   }
   constructor(
@@ -26,16 +29,17 @@ export class ArticleService implements OnModuleInit {
     private categoryRepository: Repository<Category>,
     @InjectRepository(Tag)
     private tagRepository: Repository<Tag>,
-    private markdownService: MarkdownService
+    private markdownService: MarkdownService,
   ) {}
 
   private toResponseDto(article: Article): ArticleResponseDto {
-    const tags = article.tags?.map((t) => ({
-      id: t.id,
-      name: t.name,
-      slug: t.slug,
-      article_count: t.articles?.length || 0,
-    })) || [];
+    const tags =
+      article.tags?.map((t) => ({
+        id: t.id,
+        name: t.name,
+        slug: t.slug,
+        article_count: t.articles?.length || 0,
+      })) || [];
 
     const category = article.category
       ? {
@@ -99,7 +103,9 @@ export class ArticleService implements OnModuleInit {
       article.tags = [];
 
       for (const tagName of mdArticle.tags) {
-        let tag = await this.tagRepository.findOne({ where: { name: tagName } });
+        let tag = await this.tagRepository.findOne({
+          where: { name: tagName },
+        });
         if (!tag) {
           tag = this.tagRepository.create({
             name: tagName,
@@ -114,26 +120,33 @@ export class ArticleService implements OnModuleInit {
     }
   }
 
-  async findAll(options: { category?: string; tag?: string; page?: number; pageSize?: number }): Promise<ArticleResponseDto[]> {
+  async findAll(options: {
+    category?: string;
+    tag?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<ArticleResponseDto[]> {
     const page = options.page || 1;
     const pageSize = options.pageSize || 10;
 
     let query = this.articleRepository
-      .createQueryBuilder("article")
-      .leftJoinAndSelect("article.category", "category")
-      .leftJoinAndSelect("article.tags", "tags")
-      .orderBy("article.createdAt", "DESC")
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.category', 'category')
+      .leftJoinAndSelect('article.tags', 'tags')
+      .orderBy('article.createdAt', 'DESC')
       .skip((page - 1) * pageSize)
       .take(pageSize);
 
     if (options.category) {
-      query = query.where("category.slug = :category", { category: options.category });
+      query = query.where('category.slug = :category', {
+        category: options.category,
+      });
     }
 
     if (options.tag) {
       query = query
-        .innerJoin("article.tags", "tag")
-        .where("tag.slug = :tag", { tag: options.tag });
+        .innerJoin('article.tags', 'tag')
+        .where('tag.slug = :tag', { tag: options.tag });
     }
 
     const articles = await query.getMany();
@@ -143,11 +156,11 @@ export class ArticleService implements OnModuleInit {
   async findBySlug(slug: string): Promise<ArticleDetailResponseDto> {
     const article = await this.articleRepository.findOne({
       where: { slug },
-      relations: ["category", "tags"],
+      relations: ['category', 'tags'],
     });
 
     if (!article) {
-      throw new NotFoundException("文章不存在");
+      throw new NotFoundException('文章不存在');
     }
 
     return this.toDetailResponseDto(article);

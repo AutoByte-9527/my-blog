@@ -8,12 +8,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-} from "typeorm";
-import { Category } from "../../category/entities/category.entity";
-import { Tag } from "../../tag/entities/tag.entity";
-import { VisitLog } from "../../visit/entities/visit-log.entity";
+} from 'typeorm';
+import { Category } from '../../category/entities/category.entity';
+import { Tag } from '../../tag/entities/tag.entity';
+import { VisitLog } from '../../visit/entities/visit-log.entity';
 
-@Entity("articles")
+@Entity('articles')
 export class Article {
   @PrimaryGeneratedColumn()
   id: number;
@@ -24,19 +24,19 @@ export class Article {
   @Column()
   title: string;
 
-  @Column("text")
+  @Column('text')
   content: string;
 
-  @Column("text", { nullable: true })
+  @Column('text', { nullable: true })
   summary: string;
 
-  @CreateDateColumn({ name: "created_at" })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: "updated_at" })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @Column({ nullable: true, name: "category_id" })
+  @Column({ nullable: true, name: 'category_id' })
   categoryId: number;
 
   @ManyToOne(() => Category, (category) => category.articles)
@@ -44,9 +44,9 @@ export class Article {
 
   @ManyToMany(() => Tag, (tag) => tag.articles)
   @JoinTable({
-    name: "article_tags",
-    joinColumn: { name: "article_id", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "tag_id", referencedColumnName: "id" },
+    name: 'article_tags',
+    joinColumn: { name: 'article_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' },
   })
   tags: Tag[];
 

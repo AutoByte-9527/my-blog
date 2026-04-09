@@ -1,10 +1,14 @@
-import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { VisitLog } from "./entities/visit-log.entity";
-import { Article } from "../article/entities/article.entity";
-import { MarkdownService } from "../markdown/markdown.service";
-import { CreateVisitDto } from "./dto/create-visit.dto";
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { VisitLog } from './entities/visit-log.entity';
+import { Article } from '../article/entities/article.entity';
+import { MarkdownService } from '../markdown/markdown.service';
+import { CreateVisitDto } from './dto/create-visit.dto';
 
 @Injectable()
 export class VisitService {
@@ -13,27 +17,30 @@ export class VisitService {
     private visitLogRepository: Repository<VisitLog>,
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-    private markdownService: MarkdownService
+    private markdownService: MarkdownService,
   ) {}
 
   private getRealIp(request: any): string {
-    const forwarded = request.headers["x-forwarded-for"];
+    const forwarded = request.headers['x-forwarded-for'];
     if (forwarded) {
       const ips = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-      return ips.split(",")[0].trim();
+      return ips.split(',')[0].trim();
     }
-    const realIp = request.headers["x-real-ip"];
+    const realIp = request.headers['x-real-ip'];
     if (realIp) {
       return Array.isArray(realIp) ? realIp[0] : realIp;
     }
-    return request.ip || request.socket.remoteAddress || "127.0.0.1";
+    return request.ip || request.socket.remoteAddress || '127.0.0.1';
   }
 
-  async create(dto: CreateVisitDto, request: any): Promise<{ message: string }> {
-    const userAgent = request.headers["user-agent"] || "";
+  async create(
+    dto: CreateVisitDto,
+    request: any,
+  ): Promise<{ message: string }> {
+    const userAgent = request.headers['user-agent'] || '';
 
     if (!this.markdownService.isValidUserAgent(userAgent)) {
-      throw new BadRequestException("无效的 User-Agent");
+      throw new BadRequestException('无效的 User-Agent');
     }
 
     const article = await this.articleRepository.findOne({
@@ -41,7 +48,7 @@ export class VisitService {
     });
 
     if (!article) {
-      throw new NotFoundException("文章不存在");
+      throw new NotFoundException('文章不存在');
     }
 
     const uaInfo = this.markdownService.parseUserAgent(userAgent);
@@ -60,6 +67,6 @@ export class VisitService {
 
     await this.visitLogRepository.save(visitLog);
 
-    return { message: "访问记录成功" };
+    return { message: '访问记录成功' };
   }
 }

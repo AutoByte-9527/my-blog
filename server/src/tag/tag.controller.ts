@@ -1,8 +1,8 @@
-import { Controller, Get } from "@nestjs/common";
-import { TagService } from "./tag.service";
-import { Tag } from "@my-blog/shared";
+import { Controller, Get } from '@nestjs/common';
+import { TagService } from './tag.service';
+import { Tag } from '@my-blog/shared';
 
-@Controller("api/tags")
+@Controller('api/tags')
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 

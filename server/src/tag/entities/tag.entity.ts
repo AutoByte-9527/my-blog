@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
-import { Article } from "../../article/entities/article.entity";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Article } from '../../article/entities/article.entity';
 
-@Entity("tags")
+@Entity('tags')
 export class Tag {
   @PrimaryGeneratedColumn()
   id: number;

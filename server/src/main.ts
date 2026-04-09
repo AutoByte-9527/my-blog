@@ -1,13 +1,13 @@
-import { NestFactory } from "@nestjs/core";
-import { ValidationPipe } from "@nestjs/common";
-import { AppModule } from "./app.module";
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
   app.enableCors({
-    origin: "*",
+    origin: '*',
     credentials: true,
   });
 
@@ -16,7 +16,7 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-    })
+    }),
   );
 
   const port = process.env.PORT || 8000;

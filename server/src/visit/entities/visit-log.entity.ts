@@ -4,21 +4,21 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-} from "typeorm";
-import { Article } from "../../article/entities/article.entity";
+} from 'typeorm';
+import { Article } from '../../article/entities/article.entity';
 
-@Entity("visit_logs")
+@Entity('visit_logs')
 export class VisitLog {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: "article_id" })
+  @Column({ name: 'article_id' })
   articleId: number;
 
   @Column({ length: 50, nullable: true })
   ip: string;
 
-  @Column({ length: 500, name: "user_agent" })
+  @Column({ length: 500, name: 'user_agent' })
   userAgent: string;
 
   @Column({ length: 500, nullable: true })
@@ -39,7 +39,7 @@ export class VisitLog {
   @Column({ length: 100, nullable: true })
   os: string;
 
-  @CreateDateColumn({ name: "visited_at" })
+  @CreateDateColumn({ name: 'visited_at' })
   visitedAt: Date;
 
   @ManyToOne(() => Article, (article) => article.visitLogs)

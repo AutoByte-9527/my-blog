@@ -1,29 +1,29 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, ILike } from "typeorm";
-import { Article } from "../article/entities/article.entity";
-import { ArticleService } from "../article/article.service";
-import { ArticleListItem } from "@my-blog/shared";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, ILike } from 'typeorm';
+import { Article } from '../article/entities/article.entity';
+import { ArticleService } from '../article/article.service';
+import { ArticleListItem } from '@my-blog/shared';
 
 @Injectable()
 export class SearchService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-    private articleService: ArticleService
+    private articleService: ArticleService,
   ) {}
 
   async search(q: string): Promise<ArticleListItem[]> {
     await this.articleService.syncArticlesToDb();
 
     const articles = await this.articleRepository
-      .createQueryBuilder("article")
-      .leftJoinAndSelect("article.category", "category")
-      .leftJoinAndSelect("article.tags", "tags")
-      .where("article.title LIKE :q", { q: `%${q}%` })
-      .orWhere("article.summary LIKE :q", { q: `%${q}%` })
-      .orWhere("article.content LIKE :q", { q: `%${q}%` })
-      .orderBy("article.createdAt", "DESC")
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.category', 'category')
+      .leftJoinAndSelect('article.tags', 'tags')
+      .where('article.title LIKE :q', { q: `%${q}%` })
+      .orWhere('article.summary LIKE :q', { q: `%${q}%` })
+      .orWhere('article.content LIKE :q', { q: `%${q}%` })
+      .orderBy('article.createdAt', 'DESC')
       .limit(50)
       .getMany();
 

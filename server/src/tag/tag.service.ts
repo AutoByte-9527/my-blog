@@ -1,23 +1,23 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Tag } from "./entities/tag.entity";
-import { ArticleService } from "../article/article.service";
-import { Tag as TagType } from "@my-blog/shared";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Tag } from './entities/tag.entity';
+import { ArticleService } from '../article/article.service';
+import { Tag as TagType } from '@my-blog/shared';
 
 @Injectable()
 export class TagService {
   constructor(
     @InjectRepository(Tag)
     private tagRepository: Repository<Tag>,
-    private articleService: ArticleService
+    private articleService: ArticleService,
   ) {}
 
   async findAll(): Promise<TagType[]> {
     await this.articleService.syncArticlesToDb();
 
     const tags = await this.tagRepository.find({
-      relations: ["articles"],
+      relations: ['articles'],
     });
 
     return tags.map((t) => ({

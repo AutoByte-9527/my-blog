@@ -1,4 +1,4 @@
-import { Tag, Category, ArticleListItem, ArticleDetail } from "@my-blog/shared";
+import { Tag, Category, ArticleListItem, ArticleDetail } from '@my-blog/shared';
 
 export class ArticleResponseDto implements ArticleListItem {
   id: number;
@@ -10,7 +10,10 @@ export class ArticleResponseDto implements ArticleListItem {
   created_at: string;
 }
 
-export class ArticleDetailResponseDto extends ArticleResponseDto implements ArticleDetail {
+export class ArticleDetailResponseDto
+  extends ArticleResponseDto
+  implements ArticleDetail
+{
   content: string;
   updated_at: string;
 }
