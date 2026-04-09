@@ -33,7 +33,7 @@ docs/
 .env.local
 
 # Uploads / data
-data/articles/*.md
+# data/articles/*.md  # 文章文件需要上传
 blog.db
 
 # SSL certificates (never commit real certificates)
