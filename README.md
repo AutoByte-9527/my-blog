@@ -12,7 +12,7 @@
 
 ```bash
 pnpm install
-./dev.sh
+pnpm dev
 ```
 
 ## 部署
