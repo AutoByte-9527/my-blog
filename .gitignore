@@ -44,3 +44,8 @@ ssl/
 
 # Serena
 .serena/
+
+# Nginx (binary and runtime files)
+nginx/nginx
+nginx/logs/
+nginx/temp/
