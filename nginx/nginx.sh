@@ -4,8 +4,15 @@
 # 用法: ./nginx.sh [start|stop|restart|reload|status]
 
 NGINX_DIR="$(cd "$(dirname "$0")" && pwd)"
-NGINX_BIN="$NGINX_DIR/nginx"
-NGINX_CONF="$NGINX_DIR/nginx.conf"
+NGINX_BIN="${NGINX_DIR}/nginx"
+NGINX_CONF="${NGINX_DIR}/nginx.conf"
+
+# 优先使用系统 nginx
+if [ ! -f "$NGINX_BIN" ]; then
+    if command -v nginx &>/dev/null; then
+        NGINX_BIN=$(command -v nginx)
+    fi
+fi
 
 # 检查配置
 check_config() {
