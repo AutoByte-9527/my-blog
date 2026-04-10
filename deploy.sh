@@ -28,20 +28,13 @@ pnpm install --frozen-lockfile
 pnpm build
 cd ..
 
-# 4. 安装 Nginx（如需要）
-echo "[4/5] 检查 Nginx..."
-NGINX_BIN="./nginx/nginx"
-if [ ! -f "$NGINX_BIN" ]; then
-    echo "下载 Nginx..."
-    if command -v apt &>/dev/null; then
-        sudo apt install -y nginx
-        cp /usr/sbin/nginx "$NGINX_BIN"
-        chmod +x "$NGINX_BIN"
-    else
-        echo "请手动安装 Nginx 或复制 nginx 二进制到 nginx/nginx"
-        exit 1
-    fi
+# 4. 检查 Nginx 配置
+echo "[4/5] 检查 Nginx 配置..."
+if [ ! -f "./nginx/nginx.conf" ]; then
+    echo "错误: Nginx 配置文件不存在"
+    exit 1
 fi
+echo "Nginx 配置检查通过"
 
 # 5. 启动服务
 echo "[5/5] 启动服务..."
