@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal blog monorepo with **Vite + React frontend** and **NestJS backend**. Articles are Markdown files managed manually in `data/articles/`.
+Personal blog monorepo with **Vite + React frontend** and **NestJS backend**. Articles are managed via Admin panel (stored in SQLite database).
 
 ## Architecture
 
@@ -16,35 +16,39 @@ my-blog/
 │       ├── App.tsx          # AppLayout with Header/Footer
 │       ├── routes.tsx       # React Router v7 routes
 │       ├── pages/           # Page components
+│       │   └── admin/      # Admin panel pages
 │       ├── components/      # UI components
-│       ├── lib/api.ts       # API client
+│       │   └── admin/      # Admin components (Layout, Sidebar, Charts, Editor)
+│       ├── lib/api.ts       # Public API client
+│       ├── lib/admin-api.ts # Admin API client
 │       └── stores/          # Zustand state
+│           └── admin-store.ts # Admin auth state
 ├── server/                   # NestJS 11 - backend API
 │   └── src/
 │       ├── main.ts          # Bootstrap
-│       ├── app.module.ts    # Root module
-│       ├── article/         # Article module (controller, service, entity)
-│       ├── category/        # Category module
-│       ├── tag/             # Tag module
-│       ├── search/          # Search module
-│       ├── visit/           # Visit tracking module
+│       ├── app.module.ts    # Root module (ConfigModule global)
+│       ├── auth/            # JWT auth module
+│       ├── upload/          # File upload module
+│       ├── article/         # Article module (public + admin controllers)
+│       ├── category/        # Category module (public + admin controllers)
+│       ├── tag/             # Tag module (public + admin controllers)
+│       ├── visit/          # Visit tracking module (public + admin controllers)
 │       └── markdown/        # Markdown parser service
 ├── packages/shared/          # Shared TypeScript types
-├── data/articles/            # Markdown articles
 └── blog.db                   # SQLite database
 ```
 
 ## Tech Stack
 
-**Frontend:** Vite 6 + React 19 + Tailwind CSS v4 + React Router v7 + SWR + Zustand
+**Frontend:** Vite 6 + React 19 + Tailwind CSS v4 + React Router v7 + SWR + Zustand + Recharts + TipTap
 
-**Backend:** NestJS 11 + TypeORM + SQLite (better-sqlite3) + class-validator
+**Backend:** NestJS 11 + TypeORM + SQLite (better-sqlite3) + class-validator + @nestjs/config
 
 **Monorepo:** pnpm workspaces
 
 ## Development Commands
 
-**Start all services (both servers + nginx):**
+**Start all services:**
 ```bash
 pnpm dev
 ```
@@ -54,7 +58,6 @@ pnpm dev
 cd web
 pnpm dev        # Dev server on port 3000
 pnpm build     # Production build
-pnpm lint      # ESLint
 ```
 
 **Backend (server/):**
@@ -62,64 +65,40 @@ pnpm lint      # ESLint
 cd server
 pnpm dev       # Dev with hot reload (port 8000)
 pnpm build     # Production build
-pnpm test      # Jest tests
 ```
 
-**Start backend directly:**
+## Admin System
+
+Admin panel at `/admin/login` - managed via environment variables.
+
+**Setup:**
+1. Create `server/.env` with admin credentials:
 ```bash
-cd server && pnpm start:dev
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your-password
+JWT_SECRET=your-secret-key
 ```
+2. Server auto-creates admin user on startup if not exists
+3. Login at `/admin/login`
 
-## Article System
-
-Articles are Markdown files in `data/articles/`. Create a new article by adding a `.md` file:
-
-```markdown
----
-title: "文章标题"
-slug: "article-slug"
-summary: "文章简介"
-category: "技术"
-tags: ["React", "TypeScript"]
-created_at: "2026-04-09"
----
-
-正文内容...
-```
-
-**Front matter fields:**
-- `title` (required) - Article title
-- `slug` (optional) - URL slug, defaults to filename
-- `summary` (optional) - Brief description
-- `category` (optional, default: "未分类") - Category name
-- `tags` (optional, default: []) - Array of tag names
-- `created_at` (optional) - Publication date
-
-Backend auto-syncs articles from `data/articles/` on startup.
-
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/articles` | List articles (`?category=`, `?tag=`, `?page=`, `?page_size=`) |
-| GET | `/api/articles/:slug` | Get single article |
-| GET | `/api/categories` | List categories with article counts |
-| GET | `/api/tags` | List tags with article counts |
-| GET | `/api/search?q=` | Search articles |
-| POST | `/api/visits` | Record visit (rate-limited: 10/min) |
-| GET | `/api/visits/stats` | Get total visit count |
-
-Frontend proxies `/api/*` to backend at `http://localhost:8000`.
+**Admin API Routes (JWT protected):**
+- `/api/admin/auth/login` - Login
+- `/api/admin/articles` - Article CRUD
+- `/api/admin/categories` - Category CRUD
+- `/api/admin/tags` - Tag CRUD
+- `/api/admin/visits/*` - Visit statistics (trend, geo, devices, browsers, os, referers)
+- `/api/admin/upload/image` - Image upload (local storage in `public/uploads/`)
 
 ## Database
 
-SQLite at `blog.db`. Tables: `articles`, `categories`, `tags`, `article_tags`, `visit_logs`.
+SQLite at `blog.db`. Tables: `articles`, `categories`, `tags`, `article_tags`, `visit_logs`, `admin_users`.
 
 **Entities:**
 - `Article` - id, slug, title, content, summary, viewCount, category, tags, visitLogs
 - `Category` - id, name, slug, articles
 - `Tag` - id, name, slug, articles
 - `VisitLog` - id, articleId, ip, userAgent, referer, country, city, device, browser, os, visitedAt
+- `AdminUser` - id, username, password (bcrypt), nickname
 
 ## Design System
 
@@ -129,11 +108,26 @@ SQLite at `blog.db`. Tables: `articles`, `categories`, `tags`, `article_tags`, `
 
 ## Production Deployment
 
-**PM2** (`ecosystem.config.js`): Runs backend and nginx as processes
+**PM2** (`ecosystem.config.js`):
+```bash
+pm2 start ecosystem.config.js --env production
+```
+
+Environment variables loaded from `server/.env` via `env_file` config.
 
 **Nginx** (`nginx/`): Serves built frontend assets, proxies `/api/` to backend
 
 **Rate limiting:** 100 req/min globally, 10 req/min for POST `/api/visits`
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `ADMIN_USERNAME` | Initial admin username |
+| `ADMIN_PASSWORD` | Initial admin password |
+| `JWT_SECRET` | JWT signing secret |
+| `NODE_ENV` | production/development |
+| `PORT` | Server port (default 8000) |
 
 ## Notes
 
@@ -141,3 +135,4 @@ SQLite at `blog.db`. Tables: `articles`, `categories`, `tags`, `article_tags`, `
 - Frontend uses SWR for data fetching, Zustand for state
 - Visit tracking parses user-agent for device/browser/OS info
 - Bots are filtered out from visit tracking by user-agent pattern matching
+- Images uploaded via Admin are stored locally in `public/uploads/`
