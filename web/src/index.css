@@ -6,6 +6,9 @@
   --primary: #2D2D2D;
   --accent: #8B4513;
   --muted: #6B6B6B;
+  --ink-light: rgba(45, 45, 45, 0.30);
+  --border: rgba(45, 45, 45, 0.10);
+  --shadow: rgba(45, 45, 45, 0.06);
 }
 
 body {
@@ -29,4 +32,86 @@ body {
 
 .page-animate {
   animation: pageFadeIn 250ms ease-out forwards;
+}
+
+/* ── Back to Top ─────────────────────────────────── */
+
+@keyframes btnReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  /* 触屏最小目标 44×44，实际视觉 40×40 圆形 */
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--background);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  box-shadow: 0 1px 4px var(--shadow);
+  transition:
+    opacity 250ms ease-out,
+    transform 250ms ease-out,
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
+  /* 无连续动画 */
+}
+
+.back-to-top.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top {
+    transition: none;
+    animation: none;
+  }
+  .back-to-top.show {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.back-to-top:hover {
+  background: rgba(139, 69, 19, 0.05);
+  border-color: rgba(139, 69, 19, 0.30);
+  box-shadow: 0 2px 8px rgba(139, 69, 19, 0.10);
+}
+
+.back-to-top:active {
+  transform: scale(0.92);
+  transition-duration: 100ms;
+}
+
+/* 简洁单笔箭头 — 静止为极淡墨，hover 变赭石 */
+.btt-arrow {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--ink-light);
+  transition: color 200ms ease;
+  /* 用 stroke 而非 fill，保持墨迹线条感 */
+}
+
+.back-to-top:hover .btt-arrow {
+  color: var(--accent);
 }

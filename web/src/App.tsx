@@ -5,6 +5,7 @@ import { getCategories, getTags } from '@/lib/api'
 import { useAppStore } from '@/stores/appStore'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import BackToTop from '@/components/BackToTop'
 
 function AppLayout() {
   const location = useLocation()
@@ -27,6 +28,7 @@ function AppLayout() {
         </div>
       </main>
       <Footer />
+      <BackToTop />
     </div>
   )
 }
