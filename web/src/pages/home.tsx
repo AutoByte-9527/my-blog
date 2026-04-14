@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { getArticles } from '@/lib/api'
-import { ArticleListItem } from '@my-blog/shared'
+import { ArticleListItem } from '@/lib/types'
 import ArticleCard from '@/components/ArticleCard'
 
 export default function HomePage() {

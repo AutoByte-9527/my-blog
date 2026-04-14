@@ -1,6 +1,6 @@
-import { ArticleListItem, ArticleDetail, Tag, Category, VisitData, VisitStats } from "@my-blog/shared";
+import { ArticleListItem, ArticleDetail, Tag, Category, VisitData, VisitStats } from "@/lib/types";
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+export const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export class ApiError extends Error {
   constructor(

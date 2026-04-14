@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Category, Tag } from "@my-blog/shared";
+import { Category, Tag } from "@/lib/types";
 
 interface AppState {
   categories: Category[];

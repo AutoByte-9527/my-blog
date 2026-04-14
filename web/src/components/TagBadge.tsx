@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Tag } from "@my-blog/shared";
+import { Tag } from "@/lib/types";
 
 interface TagBadgeProps {
   tag: Tag;

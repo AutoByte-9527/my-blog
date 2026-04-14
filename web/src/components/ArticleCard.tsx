@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { ArticleListItem } from "@my-blog/shared";
+import { ArticleListItem } from "@/lib/types";
 import TagBadge from "./TagBadge";
 import CategoryBadge from "./CategoryBadge";
 

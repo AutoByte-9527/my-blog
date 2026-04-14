@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Category } from "@my-blog/shared";
+import { Category } from "@/lib/types";
 
 interface CategoryBadgeProps {
   category: Category;

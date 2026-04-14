@@ -27,7 +27,9 @@ async function fetchAdminApi<T>(url: string, options: RequestInit = {}): Promise
     throw new Error(`API Error: ${response.status}`);
   }
 
-  return response.json();
+  const text = await response.text();
+  if (!text) return undefined;
+  return JSON.parse(text);
 }
 
 // Auth API

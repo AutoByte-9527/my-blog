@@ -1,11 +1,14 @@
 import { useParams } from 'react-router'
 import { useEffect, useRef } from 'react'
 import useSWR from 'swr'
-import ReactMarkdown from 'react-markdown'
 import { getArticle, recordVisit } from '@/lib/api'
-import { ArticleDetail } from '@my-blog/shared'
+import { ArticleDetail } from '@/lib/types'
 import TagBadge from '@/components/TagBadge'
 import CategoryBadge from '@/components/CategoryBadge'
+
+function processContent(content: string): string {
+  return content.replace(/src="\/uploads\//g, 'src="/api/uploads/')
+}
 
 export default function ArticleDetailPage() {
   const { slug } = useParams()
@@ -67,7 +70,7 @@ export default function ArticleDetailPage() {
         </div>
       )}
       <div className="article-content text-[var(--foreground)] leading-loose">
-        <ReactMarkdown>{article.content}</ReactMarkdown>
+        <div dangerouslySetInnerHTML={{ __html: processContent(article.content) }} />
       </div>
     </article>
   )
