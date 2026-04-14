@@ -1,98 +1,119 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# MyBlog Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+ASP.NET Core 10 Web API for personal blog.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech Stack
 
-## Description
+- **Framework:** ASP.NET Core 10
+- **ORM:** Entity Framework Core 10
+- **Database:** SQLite
+- **Auth:** JWT Bearer Token
+- **Password:** BCrypt.Net-Next
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Project Structure
 
-## Project setup
-
-```bash
-$ pnpm install
+```
+server/
+├── MyBlog.sln           # Solution file
+├── blog.db              # SQLite database
+├── .env                 # Environment variables
+└── src/
+    └── MyBlog.Api/     # Main API project
+        ├── Program.cs   # Entry point, DI, middleware
+        ├── Controllers/ # API controllers (15 controllers)
+        ├── Services/   # Business logic layer
+        ├── Entities/    # Database entities
+        ├── Data/       # EF Core DbContext
+        ├── DTOs/       # Request/Response DTOs
+        ├── Middleware/ # Rate limiting
+        └── wwwroot/    # Static files (uploads)
 ```
 
-## Compile and run the project
+## Quick Start
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+cd server/src
+dotnet run
 ```
 
-## Run tests
+Server starts on `http://localhost:8000`
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ADMIN_USERNAME` | Initial admin username | - |
+| `ADMIN_PASSWORD` | Initial admin password | - |
+| `JWT_SECRET` | JWT signing secret | `default-secret-key-change-in-production` |
+| `PORT` | Server port | `8000` |
+
+## API Endpoints
+
+### Public
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/articles` | List articles |
+| GET | `/api/articles/:slug` | Get article by slug |
+| GET | `/api/categories` | List categories with article count |
+| GET | `/api/tags` | List tags with article count |
+| POST | `/api/visits` | Record visit |
+| GET | `/api/visits/stats` | Get total visits |
+| GET | `/api/search?q=` | Search articles |
+
+### Admin (JWT Required)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/admin/auth/login` | Login |
+| GET | `/api/admin/auth/me` | Get current user |
+| GET | `/api/admin/articles` | List articles (paginated) |
+| GET | `/api/admin/articles/:id` | Get article |
+| POST | `/api/admin/articles` | Create article |
+| PUT | `/api/admin/articles/:id` | Update article |
+| DELETE | `/api/admin/articles/:id` | Delete article |
+| GET | `/api/admin/categories` | List categories |
+| POST | `/api/admin/categories` | Create category |
+| PUT | `/api/admin/categories/:id` | Update category |
+| DELETE | `/api/admin/categories/:id` | Delete category |
+| GET | `/api/admin/tags` | List tags |
+| POST | `/api/admin/tags` | Create tag |
+| PUT | `/api/admin/tags/:id` | Update tag |
+| DELETE | `/api/admin/tags/:id` | Delete tag |
+| GET | `/api/admin/visits/stats` | Total visit count |
+| GET | `/api/admin/visits/trend` | Visit trend |
+| GET | `/api/admin/visits/top-articles` | Top articles |
+| GET | `/api/admin/visits/geo` | Geographic distribution |
+| GET | `/api/admin/visits/devices` | Device distribution |
+| GET | `/api/admin/visits/browsers` | Browser distribution |
+| GET | `/api/admin/visits/os` | OS distribution |
+| GET | `/api/admin/visits/referers` | Referer distribution |
+| POST | `/api/admin/upload/image` | Upload image |
+
+## Build & Run
 
 ```bash
-# unit tests
-$ pnpm run test
+# Development
+cd server/src
+dotnet run
 
-# e2e tests
-$ pnpm run test:e2e
+# Production build
+dotnet build -c Release
 
-# test coverage
-$ pnpm run test:cov
+# Run production
+dotnet run --no-build -c Release
 ```
 
-## Deployment
+## Database
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Uses existing SQLite database at `server/blog.db`.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Tables:
+- `admin_users`
+- `articles`
+- `categories`
+- `tags`
+- `article_tags`
+- `visit_logs`
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+EF Core automatically creates schema on first run if database doesn't exist.
